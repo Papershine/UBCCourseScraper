@@ -23,7 +23,6 @@ def scrape_courses_of(subject):
     for i in soup.findAll('a'):
         if i.parent.name == 'td':
             course_name = i.getText()
-            print(course_name)
             if int(course_name.split()[1][0]) <= 4: # Only check undergraduate courses
                 scraped_courses.append(i.getText())
     if len(scraped_courses) > 0:
@@ -37,8 +36,14 @@ def scrape_course(course_title):
     soup = BeautifulSoup(page.content, "html.parser")
 
     title = soup.find('h4').getText()
-    prereqs = soup.find('p', text=re.compile('^Pre-reqs')).getText()
-    coreqs = soup.find('p', text=re.compile('^Co-reqs')).getText()
+    prereqs = soup.find('p', string=re.compile('^Pre-reqs'))
+    coreqs = soup.find('p', string=re.compile('^Co-reqs'))
+
+    if prereqs is not None:
+        prereqs = prereqs.getText()
+
+    if coreqs is not None:
+        coreqs = coreqs.getText()
 
     course_dict = {
         "code": course_title,
@@ -80,4 +85,3 @@ if __name__ == '__main__':
         json.dump(all_courses_expanded, courses_expanded_file, indent=6)
     print('Done!')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
