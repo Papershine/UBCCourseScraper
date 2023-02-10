@@ -36,14 +36,14 @@ def scrape_course(course_title):
     soup = BeautifulSoup(page.content, "html.parser")
 
     title = soup.find('h4').getText()
-    prereqs = soup.find('p', string=re.compile('^Pre-reqs'))
-    coreqs = soup.find('p', string=re.compile('^Co-reqs'))
+    prereqs = None
+    coreqs = None
 
-    if prereqs is not None:
-        prereqs = prereqs.getText()
-
-    if coreqs is not None:
-        coreqs = coreqs.getText()
+    for p in soup.findAll('p'):
+        if p.getText().startswith("Pre-reqs"):
+            prereqs = p.getText()
+        if p.getText().startswith("Co-reqs"):
+            coreqs = p.getText()
 
     course_dict = {
         "code": course_title,
@@ -78,10 +78,10 @@ if __name__ == '__main__':
     print(ugrad_subjects)
     print(all_courses)
     with open("ugrad_subjects.json", "w+") as subject_file:
-        json.dump(ugrad_subjects, subject_file, indent=6)
+        json.dump(ugrad_subjects, subject_file, indent=4)
     with open("all_courses.json", "w+") as courses_file:
-        json.dump(all_courses, courses_file, indent=6)
+        json.dump(all_courses, courses_file, indent=4)
     with open("all_courses_expanded.json", "w+") as courses_expanded_file:
-        json.dump(all_courses_expanded, courses_expanded_file, indent=6)
+        json.dump(all_courses_expanded, courses_expanded_file, indent=4)
     print('Done!')
 
